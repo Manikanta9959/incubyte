@@ -8,13 +8,13 @@ class StringCalculator:
         if not numbers:
             return 0
         
-        delimiter, numbers_to_parse = self._extract_delimiter_and_numbers(numbers)
-        number_list = self._parse_numbers(numbers_to_parse, delimiter)
+        delimiters, numbers_to_parse = self._extract_delimiter_and_numbers(numbers)
+        number_list = self._parse_numbers(numbers_to_parse, delimiters)
         self._validate_negatives(number_list)
         
         return sum(number_list)
     
-    def _extract_delimiter_and_numbers(self, numbers: str) -> Tuple[str, str]:
+    def _extract_delimiter_and_numbers(self, numbers: str) -> Tuple[List[str], str]:
         if numbers.startswith("//"):
             delimiter_end = numbers.index("\n")
             delimiter_section = numbers[2:delimiter_end]
@@ -23,21 +23,17 @@ class StringCalculator:
             delimiters = re.findall(r"\[(.*?)\]", delimiter_section)
             if not delimiters:
                 delimiters = [delimiter_section]
-
-        return delimiters, numbers_to_parse
+                
+            return delimiters, numbers_to_parse
         
-        return ",", numbers
+        return [",", "\n"], numbers
     
-    def _parse_numbers(self, numbers_str: str, delimiter: str) -> List[int]:
-        normalized_string = self._normalize_delimiters(numbers_str, delimiter)
-        number_strings = self._split_by_delimiter(normalized_string, delimiter)
+    def _parse_numbers(self, numbers_str: str, delimiters: List[str]) -> List[int]:
+        number_strings = self._split_by_delimiter(numbers_str, delimiters)
         return self._convert_to_integers(number_strings)
     
-    def _normalize_delimiters(self, numbers_str: str, delimiter: str) -> str:
-        return numbers_str.replace("\n", delimiter)
-    
-    def _split_by_delimiter(self, numbers_str: str, delimiter: str) -> List[str]:
-        regex_pattern = "|".join(map(re.escape, delimiter))
+    def _split_by_delimiter(self, numbers_str: str, delimiters: List[str]) -> List[str]:
+        regex_pattern = "|".join(map(re.escape, delimiters))
         return re.split(regex_pattern, numbers_str)
     
     def _convert_to_integers(self, number_strings: List[str]) -> List[int]:
@@ -45,13 +41,9 @@ class StringCalculator:
     
     def _validate_negatives(self, numbers: List[int]) -> None:
         negatives = [num for num in numbers if num < 0]
-        
         if negatives:
-            self._raise_negative_exception(negatives)
-    
-    def _raise_negative_exception(self, negatives: List[int]) -> None:
-        negative_str = ", ".join(map(str, negatives))
-        raise ValueError(f"negative numbers not allowed: {negative_str}")
+            negative_str = ", ".join(map(str, negatives))
+            raise ValueError(f"negative numbers not allowed: {negative_str}")
 
 
 if __name__ == "__main__":
