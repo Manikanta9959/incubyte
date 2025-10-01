@@ -36,7 +36,7 @@ class StringCalculator:
         return re.split(escaped_delimiter, numbers_str)
     
     def _convert_to_integers(self, number_strings: List[str]) -> List[int]:
-        return [int(num_str) for num_str in number_strings if num_str]
+        return [int(num_str) for num_str in number_strings if num_str and int(num_str) <= 1000]
     
     def _validate_negatives(self, numbers: List[int]) -> None:
         negatives = [num for num in numbers if num < 0]
