@@ -13,12 +13,17 @@ class StringCalc():
         delimiter = ","
         numbers_to_parse = self.str_num
         
+        if self.str_num.startswith("//"):
+            delimiter_end = self.str_num.index("\n")
+            delimiter = self.str_num[2:delimiter_end]
+            numbers_to_parse = self.str_num[delimiter_end + 1:]
             
         
         numbers_to_parse = numbers_to_parse.replace("\n", delimiter)
-                
         
-        number_strings = re.split(delimiter, numbers_to_parse)
+        escaped_delimiter = re.escape(delimiter)
+        
+        number_strings = re.split(escaped_delimiter, numbers_to_parse)
         
         print(number_strings)
         
@@ -39,7 +44,7 @@ class StringCalc():
         return sum(parsed_numbers)
     
 
-str_cal_obj = StringCalc("1\n1,-2,3")
+str_cal_obj = StringCalc("//;\n1;2")
 print(str_cal_obj.add())
 
         
