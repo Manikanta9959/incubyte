@@ -23,18 +23,23 @@ class StringCalc():
         print(number_strings)
         
         parsed_numbers = []
-        
+        negative_numbers = []
         
         for num_str in number_strings:
             if num_str:
                 num = int(num_str)
                 parsed_numbers.append(num)
+                if num < 0:
+                    negative_numbers.append(num)
         
+        if negative_numbers:
+            negative_str = ", ".join(map(str, negative_numbers))
+            raise ValueError(f"negative numbers not allowed: {negative_str}")
         
         return sum(parsed_numbers)
     
 
-str_cal_obj = StringCalc("1\n1,2,3")
+str_cal_obj = StringCalc("1\n1,-2,3")
 print(str_cal_obj.add())
 
         
