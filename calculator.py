@@ -17,9 +17,14 @@ class StringCalculator:
     def _extract_delimiter_and_numbers(self, numbers: str) -> Tuple[str, str]:
         if numbers.startswith("//"):
             delimiter_end = numbers.index("\n")
-            delimiter = numbers[2:delimiter_end]
+            delimiter_section = numbers[2:delimiter_end]
             numbers_to_parse = numbers[delimiter_end + 1:]
-            return delimiter, numbers_to_parse
+
+            delimiters = re.findall(r"\[(.*?)\]", delimiter_section)
+            if not delimiters:
+                delimiters = [delimiter_section]
+
+        return delimiters, numbers_to_parse
         
         return ",", numbers
     
@@ -32,8 +37,8 @@ class StringCalculator:
         return numbers_str.replace("\n", delimiter)
     
     def _split_by_delimiter(self, numbers_str: str, delimiter: str) -> List[str]:
-        escaped_delimiter = re.escape(delimiter)
-        return re.split(escaped_delimiter, numbers_str)
+        regex_pattern = "|".join(map(re.escape, delimiter))
+        return re.split(regex_pattern, numbers_str)
     
     def _convert_to_integers(self, number_strings: List[str]) -> List[int]:
         return [int(num_str) for num_str in number_strings if num_str and int(num_str) <= 1000]
